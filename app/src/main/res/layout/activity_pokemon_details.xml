@@ -86,7 +86,6 @@
             app:layout_constraintBottom_toBottomOf="@id/header"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-<!--        app:toast="@{vm.toastLiveData}"-->
 
         <com.skydoves.androidribbon.RibbonRecyclerView
             android:id="@+id/ribbonRecyclerView"

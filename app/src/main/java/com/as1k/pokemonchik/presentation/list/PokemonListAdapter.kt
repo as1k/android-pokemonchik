@@ -1,5 +1,6 @@
 package com.as1k.pokemonchik.presentation.list
 
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.as1k.pokemonchik.R
 import com.as1k.pokemonchik.model.PokemonItem
 import com.as1k.pokemonchik.presentation.base.BaseViewHolder
+import com.as1k.pokemonchik.presentation.details.PokemonDetailsActivity
 import com.bumptech.glide.Glide
 import com.github.florent37.glidepalette.BitmapPalette
 import com.github.florent37.glidepalette.GlidePalette
 import com.google.android.material.card.MaterialCardView
+import com.skydoves.transformationlayout.TransformationLayout
 
 class PokemonListAdapter(
     private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
@@ -24,6 +27,7 @@ class PokemonListAdapter(
     private var isLoaderVisible = false
 
     private val pokemons = ArrayList<PokemonItem>()
+    private var previousTime = SystemClock.elapsedRealtime()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -84,11 +88,13 @@ class PokemonListAdapter(
         private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
     ) : BaseViewHolder(view) {
 
+        val transformationLayout: TransformationLayout
         private val cardView: MaterialCardView
         private val pokemonImage: AppCompatImageView
         private val pokemonName: TextView
 
         init {
+            transformationLayout = view.findViewById(R.id.transformationLayout)
             cardView = view.findViewById(R.id.cardView)
             pokemonImage = view.findViewById(R.id.pokemonImage)
             pokemonName = view.findViewById(R.id.pokemonName)
@@ -97,6 +103,15 @@ class PokemonListAdapter(
         fun bind(item: PokemonItem) {
             bindLoadImagePalette(pokemonImage, item.getImageUrl(), cardView)
             pokemonName.text = item.name
+
+            view.setOnClickListener {
+//                itemClickListener?.invoke(item)
+                val now = SystemClock.elapsedRealtime()
+                if (now - previousTime >= transformationLayout.duration) {
+                    PokemonDetailsActivity.start(view.context, transformationLayout, item)
+                    previousTime = now
+                }
+            }
         }
 
         override fun clear() {}

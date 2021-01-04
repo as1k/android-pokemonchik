@@ -1,6 +1,13 @@
 package com.as1k.pokemonchik.presentation.utils
 
+import android.graphics.Color
+import android.graphics.Typeface
+import android.view.Gravity
 import android.view.View
+import com.as1k.pokemonchik.model.PokemonInfo
+import com.skydoves.androidribbon.RibbonRecyclerView
+import com.skydoves.androidribbon.ribbonView
+import com.skydoves.progressview.ProgressView
 
 fun View?.setVisibility(progress: Boolean) {
     if (progress) {
@@ -45,5 +52,41 @@ fun View?.isVisible(): Boolean {
         false
     } else {
         this.visibility == View.VISIBLE
+    }
+}
+
+fun ProgressView.setProgressViewData(labelText: String, max: Int, progress: Int) {
+    this.labelText = labelText
+    this.max = max.toFloat()
+    this.progress = progress.toFloat()
+}
+
+fun RibbonRecyclerView.bindPokemonTypes(types: List<PokemonInfo.TypeResponse>?) {
+    this.clear()
+    if (types != null) {
+        for (type in types) {
+            with(this) {
+                addRibbon(
+                    ribbonView(context) {
+                        setText(type.type.name)
+                        setTextColor(Color.WHITE)
+                        setPaddingLeft(84f)
+                        setPaddingRight(84f)
+                        setPaddingTop(2f)
+                        setPaddingBottom(10f)
+                        setTextSize(16f)
+                        setRibbonRadius(120f)
+                        setTextStyle(Typeface.BOLD)
+                        setRibbonBackgroundColorResource(
+                            PokemonTypeUtils.getTypeColor(type.type.name)
+                        )
+                    }.apply {
+                        maxLines = 1
+                        gravity = Gravity.CENTER
+                    }
+                )
+                addItemDecoration(SpacesItemDecoration())
+            }
+        }
     }
 }

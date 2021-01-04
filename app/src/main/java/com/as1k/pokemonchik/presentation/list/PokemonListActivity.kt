@@ -6,11 +6,11 @@ import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import com.as1k.pokemonchik.R
 import com.as1k.pokemonchik.network.ApiService
-import com.as1k.pokemonchik.presentation.details.PokemonDetailsActivity
 import kotlinx.android.synthetic.main.activity_pokemon_list.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import com.as1k.pokemonchik.presentation.utils.setVisibility
+import com.skydoves.transformationlayout.onTransformationStartContainer
 import java.io.IOException
 
 class PokemonListActivity : AppCompatActivity(), CoroutineScope {
@@ -19,7 +19,7 @@ class PokemonListActivity : AppCompatActivity(), CoroutineScope {
     private val pokemonListAdapter by lazy {
         PokemonListAdapter(
             itemClickListener = { item ->
-                PokemonDetailsActivity.start(this, item)
+//                PokemonDetailsActivity.start(this, item)
             }
         )
     }
@@ -28,6 +28,7 @@ class PokemonListActivity : AppCompatActivity(), CoroutineScope {
         get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        onTransformationStartContainer()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokemon_list)
 
