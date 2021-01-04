@@ -3,7 +3,7 @@ package com.as1k.pokemonchik.model
 import android.os.Parcelable
 import com.as1k.pokemonchik.network.NetworkConstants.POKEMON_IMAGE_URL
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Pokemon(

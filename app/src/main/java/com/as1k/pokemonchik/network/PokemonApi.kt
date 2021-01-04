@@ -14,7 +14,7 @@ interface PokemonApi {
     suspend fun getPokemonList(
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0
-    ): Flow<Response<PokemonResponse>>
+    ): Response<PokemonResponse>
 
     @GET("pokemon/{name}")
     suspend fun getPokemonInfo(@Path("name") name: String): Flow<Response<PokemonInfo>>
