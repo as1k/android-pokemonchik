@@ -1,8 +1,7 @@
 package com.as1k.pokemonchik.network
 
-import com.as1k.pokemonchik.model.PokemonInfo
-import com.as1k.pokemonchik.model.PokemonResponse
-import kotlinx.coroutines.flow.Flow
+import com.as1k.pokemonchik.data.model.PokemonInfo
+import com.as1k.pokemonchik.data.model.PokemonResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

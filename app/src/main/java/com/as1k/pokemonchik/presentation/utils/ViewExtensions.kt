@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
-import com.as1k.pokemonchik.model.PokemonInfo
+import com.as1k.pokemonchik.data.model.PokemonInfo
 import com.skydoves.androidribbon.RibbonRecyclerView
 import com.skydoves.androidribbon.ribbonView
 import com.skydoves.progressview.ProgressView

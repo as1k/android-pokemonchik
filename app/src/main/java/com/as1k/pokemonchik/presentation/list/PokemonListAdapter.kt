@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.as1k.pokemonchik.R
-import com.as1k.pokemonchik.model.PokemonItem
+import com.as1k.pokemonchik.data.model.PokemonItem
 import com.as1k.pokemonchik.presentation.base.BaseViewHolder
 import com.as1k.pokemonchik.presentation.details.PokemonDetailsActivity
 import com.bumptech.glide.Glide

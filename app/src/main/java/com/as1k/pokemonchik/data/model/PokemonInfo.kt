@@ -1,4 +1,4 @@
-package com.as1k.pokemonchik.model
+package com.as1k.pokemonchik.data.model
 
 import com.google.gson.annotations.SerializedName
 import kotlin.random.Random

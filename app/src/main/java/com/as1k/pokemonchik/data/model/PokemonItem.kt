@@ -1,4 +1,4 @@
-package com.as1k.pokemonchik.model
+package com.as1k.pokemonchik.data.model
 
 import android.os.Parcelable
 import com.as1k.pokemonchik.network.NetworkConstants.POKEMON_IMAGE_URL
