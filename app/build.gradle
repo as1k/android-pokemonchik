@@ -74,4 +74,13 @@ dependencies {
 
     // transformation layout
     implementation "com.github.skydoves:transformationlayout:1.0.6"
+
+    // ribbon view
+    implementation "com.github.skydoves:androidribbon:1.0.3"
+
+    // progress view
+    implementation "com.github.skydoves:progressview:1.1.0"
+
+    // gradation
+    implementation "com.github.skydoves:rainbow:1.0.3"
 }

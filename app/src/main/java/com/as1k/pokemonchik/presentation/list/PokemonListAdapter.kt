@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.as1k.pokemonchik.R
-import com.as1k.pokemonchik.model.Pokemon
+import com.as1k.pokemonchik.model.PokemonItem
 import com.as1k.pokemonchik.presentation.base.BaseViewHolder
 import com.bumptech.glide.Glide
 import com.github.florent37.glidepalette.BitmapPalette
@@ -15,7 +15,7 @@ import com.github.florent37.glidepalette.GlidePalette
 import com.google.android.material.card.MaterialCardView
 
 class PokemonListAdapter(
-    private val itemClickListener: ((item: Pokemon) -> Unit)? = null
+    private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
 ) : RecyclerView.Adapter<BaseViewHolder>() {
 
     private val VIEW_TYPE_LOADING = 0
@@ -23,7 +23,7 @@ class PokemonListAdapter(
 
     private var isLoaderVisible = false
 
-    private val pokemons = ArrayList<Pokemon>()
+    private val pokemons = ArrayList<PokemonItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -59,18 +59,18 @@ class PokemonListAdapter(
         }
     }
 
-    fun addItems(list: List<Pokemon>) {
+    fun addItems(list: List<PokemonItem>) {
         pokemons.addAll(list)
         notifyDataSetChanged()
     }
 
-    fun setNewItems(list: List<Pokemon>) {
+    fun setNewItems(list: List<PokemonItem>) {
         pokemons.clear()
         addItems(list)
         isLoaderVisible = false
     }
 
-    fun getItem(position: Int): Pokemon? {
+    fun getItem(position: Int): PokemonItem? {
         return pokemons.get(position)
     }
 
@@ -81,7 +81,7 @@ class PokemonListAdapter(
 
     inner class PokemonViewHolder(
         private val view: View,
-        private val itemClickListener: ((item: Pokemon) -> Unit)? = null
+        private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
     ) : BaseViewHolder(view) {
 
         private val cardView: MaterialCardView
@@ -94,7 +94,7 @@ class PokemonListAdapter(
             pokemonName = view.findViewById(R.id.pokemonName)
         }
 
-        fun bind(item: Pokemon) {
+        fun bind(item: PokemonItem) {
             bindLoadImagePalette(pokemonImage, item.getImageUrl(), cardView)
             pokemonName.text = item.name
         }

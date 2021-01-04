@@ -6,23 +6,30 @@ import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import com.as1k.pokemonchik.R
 import com.as1k.pokemonchik.network.ApiService
-import kotlinx.android.synthetic.main.activity_main.*
+import com.as1k.pokemonchik.presentation.details.PokemonDetailsActivity
+import kotlinx.android.synthetic.main.activity_pokemon_list.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-import com.as1k.pokemonchik.presentation.utils.setProgress
+import com.as1k.pokemonchik.presentation.utils.setVisibility
 import java.io.IOException
 
-class MainActivity : AppCompatActivity(), CoroutineScope {
+class PokemonListActivity : AppCompatActivity(), CoroutineScope {
 
     private val job = SupervisorJob()
-    private val pokemonListAdapter by lazy { PokemonListAdapter() }
+    private val pokemonListAdapter by lazy {
+        PokemonListAdapter(
+            itemClickListener = { item ->
+                PokemonDetailsActivity.start(this, item)
+            }
+        )
+    }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_pokemon_list)
 
         initPokemonListAdapter()
         getPokemonList()
@@ -33,8 +40,12 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
     private fun initPokemonListAdapter() {
-        rvPokemonList
         rvPokemonList.layoutManager = GridLayoutManager(this, 2)
         rvPokemonList.adapter = pokemonListAdapter
     }
@@ -44,7 +55,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             Log.e("asikn_exceptions", exception.toString())
         }
         launch(coroutineExceptionHandler) {
-            progressBar.setProgress(true)
+            progressBar.setVisibility(true)
             val list = withContext(Dispatchers.IO) {
                 val response = ApiService.getPokemonApi()
                     .getPokemonList()
@@ -55,7 +66,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 }
             }
             Log.d("movie_data_list", list.toString())
-            progressBar.setProgress(false)
+            srlPokemonList.isRefreshing = false
+            progressBar.setVisibility(false)
             pokemonListAdapter.addItems(list)
         }
     }

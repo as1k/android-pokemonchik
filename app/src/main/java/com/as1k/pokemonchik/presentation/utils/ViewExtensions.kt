@@ -2,7 +2,7 @@ package com.as1k.pokemonchik.presentation.utils
 
 import android.view.View
 
-fun View?.setProgress(progress: Boolean) {
+fun View?.setVisibility(progress: Boolean) {
     if (progress) {
         this?.post {
             animate()
