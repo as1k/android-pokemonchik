@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class PokemonItem(
+data class PokemonItemData(
     @SerializedName("page")
     var page: Int = 0,
     @SerializedName("name")

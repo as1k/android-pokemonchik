@@ -1,6 +1,6 @@
 package com.as1k.pokemonchik.network
 
-import com.as1k.pokemonchik.data.model.PokemonInfo
+import com.as1k.pokemonchik.data.model.PokemonInfoData
 import com.as1k.pokemonchik.data.model.PokemonResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -16,5 +16,5 @@ interface PokemonApi {
     ): Response<PokemonResponse>
 
     @GET("pokemon/{name}")
-    suspend fun getPokemonInfo(@Path("name") name: String): Response<PokemonInfo>
+    suspend fun getPokemonInfo(@Path("name") name: String): Response<PokemonInfoData>
 }

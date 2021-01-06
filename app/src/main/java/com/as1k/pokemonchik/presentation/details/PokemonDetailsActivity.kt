@@ -9,8 +9,8 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import com.as1k.pokemonchik.R
-import com.as1k.pokemonchik.data.model.PokemonInfo
-import com.as1k.pokemonchik.data.model.PokemonItem
+import com.as1k.pokemonchik.domain.model.PokemonInfo
+import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.network.ApiService
 import com.as1k.pokemonchik.presentation.utils.IntentConstants.POKEMON_ITEM
 import com.as1k.pokemonchik.presentation.utils.bindPokemonTypes
