@@ -1,7 +1,8 @@
-package com.as1k.pokemonchik.network
+package com.as1k.pokemonchik.data.network
 
 import com.as1k.pokemonchik.data.model.PokemonInfoData
-import com.as1k.pokemonchik.data.model.PokemonResponse
+import com.as1k.pokemonchik.data.model.PokemonResponseData
+import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -10,11 +11,11 @@ import retrofit2.http.Query
 interface PokemonApi {
 
     @GET("pokemon")
-    suspend fun getPokemonList(
+    fun getPokemonList(
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0
-    ): Response<PokemonResponse>
+    ): Single<Response<PokemonResponseData>>
 
     @GET("pokemon/{name}")
-    suspend fun getPokemonInfo(@Path("name") name: String): Response<PokemonInfoData>
+    fun getPokemonInfo(@Path("name") name: String): Single<Response<PokemonInfoData>>
 }

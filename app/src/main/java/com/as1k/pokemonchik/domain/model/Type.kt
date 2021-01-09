@@ -1,7 +1,9 @@
 package com.as1k.pokemonchik.domain.model
 
-import com.google.gson.annotations.SerializedName
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Type(
     val name: String
-)
+) : Parcelable

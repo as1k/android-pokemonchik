@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import com.as1k.pokemonchik.R
-import com.as1k.pokemonchik.network.ApiService
+import com.as1k.pokemonchik.data.network.ApiService
 import kotlinx.android.synthetic.main.activity_pokemon_list.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -66,7 +66,6 @@ class PokemonListActivity : AppCompatActivity(), CoroutineScope {
                     throw IOException("")
                 }
             }
-            Log.d("movie_data_list", list.toString())
             srlPokemonList.isRefreshing = false
             progressBar.setVisibility(false)
             pokemonListAdapter.addItems(list)

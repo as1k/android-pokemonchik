@@ -1,6 +1,5 @@
 package com.as1k.pokemonchik.domain.model
 
-import com.google.gson.annotations.SerializedName
 import kotlin.random.Random
 
 data class PokemonInfo(

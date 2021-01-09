@@ -1,4 +1,4 @@
-package com.as1k.pokemonchik.network
+package com.as1k.pokemonchik.data.network
 
 object NetworkConstants {
     const val POKEMON_API_URL = "https://pokeapi.co/api/v2/"

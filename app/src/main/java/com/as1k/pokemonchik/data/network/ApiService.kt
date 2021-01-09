@@ -1,9 +1,10 @@
-package com.as1k.pokemonchik.network
+package com.as1k.pokemonchik.data.network
 
-import com.as1k.pokemonchik.network.NetworkConstants.POKEMON_API_URL
+import com.as1k.pokemonchik.data.network.NetworkConstants.POKEMON_API_URL
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -20,6 +21,7 @@ object ApiService {
             .baseUrl(POKEMON_API_URL)
             .client(getOkHttp())
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
     }
 
