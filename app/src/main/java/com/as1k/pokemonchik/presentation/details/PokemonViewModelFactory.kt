@@ -1,4 +1,4 @@
-package com.as1k.pokemonchik.presentation
+package com.as1k.pokemonchik.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

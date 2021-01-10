@@ -12,7 +12,7 @@ import com.as1k.pokemonchik.data.network.ApiService
 import com.as1k.pokemonchik.data.repository.PokemonRepositoryImpl
 import com.as1k.pokemonchik.domain.repository.PokemonRepository
 import com.as1k.pokemonchik.presentation.PokemonState
-import com.as1k.pokemonchik.presentation.PokemonViewModelFactory
+import com.as1k.pokemonchik.presentation.details.PokemonViewModelFactory
 import kotlinx.android.synthetic.main.activity_pokemon_list.*
 import com.as1k.pokemonchik.presentation.utils.setVisibility
 import com.skydoves.transformationlayout.onTransformationStartContainer
@@ -37,7 +37,7 @@ class PokemonListActivity : AppCompatActivity() {
         getPokemonList()
 
         srlPokemonList.setOnRefreshListener {
-            getPokemonList()
+            pokemonListViewModel.clear()
         }
     }
 
@@ -58,7 +58,6 @@ class PokemonListActivity : AppCompatActivity() {
     }
 
     private fun getPokemonList() {
-        pokemonListViewModel.getPokemonList()
         pokemonListViewModel.liveData.observe(this, Observer { result ->
             when (result) {
                 is PokemonState.ShowLoading -> {
@@ -68,12 +67,13 @@ class PokemonListActivity : AppCompatActivity() {
                     progressBar.setVisibility(false)
                     srlPokemonList.isRefreshing = false
                 }
-                is PokemonState.ResultListResponse -> {
-                    pokemonListAdapter.submitList(result.pokemonListResponse.results)
-                }
                 is PokemonState.Error -> {
                 }
             }
+        })
+
+        pokemonListViewModel.pagedListLiveData.observe(this, Observer { result ->
+            pokemonListAdapter.submitList(result)
         })
     }
 }

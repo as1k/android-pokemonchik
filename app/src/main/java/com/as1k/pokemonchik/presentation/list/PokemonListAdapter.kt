@@ -4,13 +4,13 @@ import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import com.as1k.pokemonchik.R
 import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.presentation.base.BaseViewHolder
 import com.as1k.pokemonchik.presentation.details.PokemonDetailsActivity
+import androidx.paging.PagedListAdapter
 import com.bumptech.glide.Glide
 import com.github.florent37.glidepalette.BitmapPalette
 import com.github.florent37.glidepalette.GlidePalette
@@ -19,7 +19,7 @@ import com.skydoves.transformationlayout.TransformationLayout
 
 class PokemonListAdapter(
     private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
-) : ListAdapter<PokemonItem, PokemonListAdapter.PokemonViewHolder>(DiffUtilCallback()) {
+) : PagedListAdapter<PokemonItem, PokemonListAdapter.PokemonViewHolder>(DiffUtilCallback()) {
 
     private var previousTime = SystemClock.elapsedRealtime()
 
@@ -32,7 +32,7 @@ class PokemonListAdapter(
     }
 
     override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        getItem(position)?.let { holder.bind(it) }
     }
 
     inner class PokemonViewHolder(
@@ -40,7 +40,7 @@ class PokemonListAdapter(
         private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
     ) : BaseViewHolder(view) {
 
-        val transformationLayout: TransformationLayout
+        private val transformationLayout: TransformationLayout
         private val cardView: MaterialCardView
         private val pokemonImage: AppCompatImageView
         private val pokemonName: TextView
