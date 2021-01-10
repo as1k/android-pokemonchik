@@ -3,15 +3,22 @@ package com.as1k.pokemonchik.presentation.details
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.as1k.pokemonchik.R
+import com.as1k.pokemonchik.data.mapper.PokemonInfoMapper
+import com.as1k.pokemonchik.data.mapper.PokemonResponseMapper
+import com.as1k.pokemonchik.data.network.ApiService
+import com.as1k.pokemonchik.data.repository.PokemonRepositoryImpl
 import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.as1k.pokemonchik.domain.model.PokemonItem
-import com.as1k.pokemonchik.data.network.ApiService
+import com.as1k.pokemonchik.domain.repository.PokemonRepository
+import com.as1k.pokemonchik.presentation.PokemonState
+import com.as1k.pokemonchik.presentation.PokemonViewModelFactory
 import com.as1k.pokemonchik.presentation.utils.IntentConstants.POKEMON_ITEM
 import com.as1k.pokemonchik.presentation.utils.bindPokemonTypes
 import com.as1k.pokemonchik.presentation.utils.setProgressViewData
@@ -26,10 +33,8 @@ import com.skydoves.transformationlayout.TransformationAppCompatActivity
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import kotlinx.android.synthetic.main.activity_pokemon_details.*
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 
-class PokemonDetailsActivity : TransformationAppCompatActivity(), CoroutineScope {
+class PokemonDetailsActivity : TransformationAppCompatActivity() {
 
     companion object {
         fun start(
@@ -43,41 +48,40 @@ class PokemonDetailsActivity : TransformationAppCompatActivity(), CoroutineScope
         }
     }
 
-    private val job = SupervisorJob()
+    private lateinit var pokemonDetailsViewModel: PokemonDetailsViewModel
     private val pokemonItem by lazy { intent.extras?.getParcelable<PokemonItem>(POKEMON_ITEM) }
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokemon_details)
         bindViews()
         setInitialData()
+        initDependencies()
         getPokemonInfo()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
+    private fun initDependencies() {
+        val repository: PokemonRepository = PokemonRepositoryImpl(
+            pokemonApi = ApiService.getPokemonApi(),
+            pokemonResponseMapper = PokemonResponseMapper(),
+            pokemonInfoMapper = PokemonInfoMapper()
+        )
+        val factory = PokemonViewModelFactory(repository)
+        pokemonDetailsViewModel = ViewModelProvider(this, factory).get(PokemonDetailsViewModel::class.java)
     }
 
     private fun getPokemonInfo() {
         val pokemonName = pokemonItem?.name ?: return
-        val exceptionHandler =
-            CoroutineExceptionHandler { _, exception: Throwable ->
-                Log.e("asikn_exceptions", exception.toString())
+
+        pokemonDetailsViewModel.getPokemonInfo(pokemonName)
+        pokemonDetailsViewModel.liveData.observe(this, Observer { result ->
+            when (result) {
+                is PokemonState.ShowLoading -> { progressBarPokemonDetails.setVisibility(true) }
+                is PokemonState.HideLoading -> { progressBarPokemonDetails.setVisibility(false) }
+                is PokemonState.ResultItem -> { setData(result.pokemonDetails) }
+                is PokemonState.Error -> { }
             }
-        launch(exceptionHandler) {
-            progressBarPokemonDetails.setVisibility(true)
-            val pokemon = withContext(Dispatchers.IO) {
-                val response = ApiService.getPokemonApi().getPokemonInfo(pokemonName)
-                if (response.isSuccessful) response.body()
-                else throw Exception("PokemonItem data exception")
-            }
-            progressBarPokemonDetails.setVisibility(false)
-            pokemon?.let { setData(it) }
-        }
+        })
     }
 
     private fun setInitialData() {
@@ -106,7 +110,7 @@ class PokemonDetailsActivity : TransformationAppCompatActivity(), CoroutineScope
         }
     }
 
-    fun bindLoadImagePaletteView(view: AppCompatImageView, url: String, paletteView: View) {
+    private fun bindLoadImagePaletteView(view: AppCompatImageView, url: String, paletteView: View) {
         val context = view.context
         Glide.with(context)
             .load(url)

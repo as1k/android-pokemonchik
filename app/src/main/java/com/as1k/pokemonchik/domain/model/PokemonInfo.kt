@@ -1,7 +1,10 @@
 package com.as1k.pokemonchik.domain.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import kotlin.random.Random
 
+@Parcelize
 data class PokemonInfo(
     val id: Int,
     val name: String,
@@ -14,7 +17,7 @@ data class PokemonInfo(
     val defense: Int = Random.nextInt(maxDefense),
     val speed: Int = Random.nextInt(maxSpeed),
     val exp: Int = Random.nextInt(maxExp)
-) {
+) : Parcelable {
 
     fun getIdString(): String = String.format("#%03d", id)
     fun getWeightString(): String = String.format("%.1f KG", weight.toFloat() / 10)

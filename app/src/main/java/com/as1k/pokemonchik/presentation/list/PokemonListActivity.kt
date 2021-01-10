@@ -2,20 +2,24 @@ package com.as1k.pokemonchik.presentation.list
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.as1k.pokemonchik.R
+import com.as1k.pokemonchik.data.mapper.PokemonInfoMapper
+import com.as1k.pokemonchik.data.mapper.PokemonResponseMapper
 import com.as1k.pokemonchik.data.network.ApiService
+import com.as1k.pokemonchik.data.repository.PokemonRepositoryImpl
+import com.as1k.pokemonchik.domain.repository.PokemonRepository
+import com.as1k.pokemonchik.presentation.PokemonState
+import com.as1k.pokemonchik.presentation.PokemonViewModelFactory
 import kotlinx.android.synthetic.main.activity_pokemon_list.*
-import kotlinx.coroutines.*
-import kotlin.coroutines.CoroutineContext
 import com.as1k.pokemonchik.presentation.utils.setVisibility
 import com.skydoves.transformationlayout.onTransformationStartContainer
-import java.io.IOException
 
-class PokemonListActivity : AppCompatActivity(), CoroutineScope {
+class PokemonListActivity : AppCompatActivity() {
 
-    private val job = SupervisorJob()
+    private lateinit var pokemonListViewModel: PokemonListViewModel
     private val pokemonListAdapter by lazy {
         PokemonListAdapter(
             itemClickListener = { item ->
@@ -24,14 +28,11 @@ class PokemonListActivity : AppCompatActivity(), CoroutineScope {
         )
     }
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
     override fun onCreate(savedInstanceState: Bundle?) {
         onTransformationStartContainer()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokemon_list)
-
+        initDependencies()
         initPokemonListAdapter()
         getPokemonList()
 
@@ -41,34 +42,39 @@ class PokemonListActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
     private fun initPokemonListAdapter() {
         rvPokemonList.layoutManager = GridLayoutManager(this, 2)
         rvPokemonList.adapter = pokemonListAdapter
     }
 
+    private fun initDependencies() {
+        val repository: PokemonRepository = PokemonRepositoryImpl(
+            pokemonApi = ApiService.getPokemonApi(),
+            pokemonResponseMapper = PokemonResponseMapper(),
+            pokemonInfoMapper = PokemonInfoMapper()
+        )
+        val factory = PokemonViewModelFactory(repository)
+        pokemonListViewModel =
+            ViewModelProvider(this, factory).get(PokemonListViewModel::class.java)
+    }
+
     private fun getPokemonList() {
-        val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-            Log.e("asikn_exceptions", exception.toString())
-        }
-        launch(coroutineExceptionHandler) {
-            progressBar.setVisibility(true)
-            val list = withContext(Dispatchers.IO) {
-                val response = ApiService.getPokemonApi()
-                    .getPokemonList()
-                if (response.isSuccessful) {
-                    response.body()?.results ?: emptyList()
-                } else {
-                    throw IOException("")
+        pokemonListViewModel.getPokemonList()
+        pokemonListViewModel.liveData.observe(this, Observer { result ->
+            when (result) {
+                is PokemonState.ShowLoading -> {
+                    progressBar.setVisibility(true)
+                }
+                is PokemonState.HideLoading -> {
+                    progressBar.setVisibility(false)
+                    srlPokemonList.isRefreshing = false
+                }
+                is PokemonState.ResultListResponse -> {
+                    pokemonListAdapter.addItems(result.pokemonListResponse.results)
+                }
+                is PokemonState.Error -> {
                 }
             }
-            srlPokemonList.isRefreshing = false
-            progressBar.setVisibility(false)
-            pokemonListAdapter.addItems(list)
-        }
+        })
     }
 }
