@@ -4,14 +4,14 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
 import com.as1k.pokemonchik.domain.model.PokemonItem
-import com.as1k.pokemonchik.domain.repository.PokemonRepository
+import com.as1k.pokemonchik.domain.use_case.PokemonListUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class PokemonDataSource(
-    private val pokemonRepository: PokemonRepository,
+    private val pokemonListUseCase: PokemonListUseCase,
     private val compositeDisposable: CompositeDisposable
 ) : PageKeyedDataSource<Pair<Int, Int>, PokemonItem>() {
 
@@ -27,7 +27,7 @@ class PokemonDataSource(
         callback: LoadInitialCallback<Pair<Int, Int>, PokemonItem>
     ) {
         compositeDisposable.add(
-            pokemonRepository.getPokemonList(DEFAULT_LIMIT, DEFAULT_OFFSET)
+            pokemonListUseCase.getPokemonList(DEFAULT_LIMIT, DEFAULT_OFFSET)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { stateMutableLiveData.postValue(PokemonState.ShowLoading) }
@@ -50,7 +50,7 @@ class PokemonDataSource(
         callback: LoadCallback<Pair<Int, Int>, PokemonItem>
     ) {
         compositeDisposable.add(
-            pokemonRepository.getPokemonList(params.key.first, params.key.second)
+            pokemonListUseCase.getPokemonList(params.key.first, params.key.second)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { stateMutableLiveData.postValue(PokemonState.ShowLoading) }

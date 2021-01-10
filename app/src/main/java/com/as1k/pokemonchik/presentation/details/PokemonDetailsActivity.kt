@@ -17,6 +17,7 @@ import com.as1k.pokemonchik.data.repository.PokemonRepositoryImpl
 import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.domain.repository.PokemonRepository
+import com.as1k.pokemonchik.domain.use_case.PokemonDetailsUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
 import com.as1k.pokemonchik.presentation.utils.IntentConstants.POKEMON_ITEM
 import com.as1k.pokemonchik.presentation.utils.bindPokemonTypes
@@ -65,10 +66,8 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
             pokemonResponseMapper = PokemonResponseMapper(),
             pokemonInfoMapper = PokemonInfoMapper()
         )
-        val factory =
-            PokemonViewModelFactory(
-                repository
-            )
+        val pokemonDetailsUseCase = PokemonDetailsUseCase(repository)
+        val factory = PokemonDetailsViewModelFactory(pokemonDetailsUseCase)
         pokemonDetailsViewModel = ViewModelProvider(this, factory).get(PokemonDetailsViewModel::class.java)
     }
 

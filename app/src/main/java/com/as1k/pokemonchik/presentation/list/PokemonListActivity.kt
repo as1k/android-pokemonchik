@@ -11,8 +11,8 @@ import com.as1k.pokemonchik.data.mapper.PokemonResponseMapper
 import com.as1k.pokemonchik.data.network.ApiService
 import com.as1k.pokemonchik.data.repository.PokemonRepositoryImpl
 import com.as1k.pokemonchik.domain.repository.PokemonRepository
+import com.as1k.pokemonchik.domain.use_case.PokemonListUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
-import com.as1k.pokemonchik.presentation.details.PokemonViewModelFactory
 import kotlinx.android.synthetic.main.activity_pokemon_list.*
 import com.as1k.pokemonchik.presentation.utils.setVisibility
 import com.skydoves.transformationlayout.onTransformationStartContainer
@@ -52,7 +52,8 @@ class PokemonListActivity : AppCompatActivity() {
             pokemonResponseMapper = PokemonResponseMapper(),
             pokemonInfoMapper = PokemonInfoMapper()
         )
-        val factory = PokemonViewModelFactory(repository)
+        val pokemonListUseCase = PokemonListUseCase(repository)
+        val factory = PokemonListViewModelFactory(pokemonListUseCase)
         pokemonListViewModel =
             ViewModelProvider(this, factory).get(PokemonListViewModel::class.java)
     }

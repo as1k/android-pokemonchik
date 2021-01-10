@@ -2,14 +2,14 @@ package com.as1k.pokemonchik.presentation.details
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.as1k.pokemonchik.domain.repository.PokemonRepository
+import com.as1k.pokemonchik.domain.use_case.PokemonDetailsUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
 import com.as1k.pokemonchik.presentation.base.BaseViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class PokemonDetailsViewModel(
-    private val pokemonRepository: PokemonRepository
+    private val pokemonDetailsUseCase: PokemonDetailsUseCase
 ) : BaseViewModel() {
 
     private val state = MutableLiveData<PokemonState>()
@@ -17,7 +17,7 @@ class PokemonDetailsViewModel(
 
     fun getPokemonInfo(pokemonName: String) {
         addDisposable(
-            pokemonRepository.getPokemonInfo(pokemonName)
+            pokemonDetailsUseCase.getPokemonInfo(pokemonName)
                 .subscribeOn(Schedulers.io())
                 .map { item -> PokemonState.ResultItem(item) }
                 .observeOn(AndroidSchedulers.mainThread())
