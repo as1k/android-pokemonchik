@@ -37,7 +37,6 @@ class PokemonListActivity : AppCompatActivity() {
         getPokemonList()
 
         srlPokemonList.setOnRefreshListener {
-            pokemonListAdapter.clearAll()
             getPokemonList()
         }
     }
@@ -70,7 +69,7 @@ class PokemonListActivity : AppCompatActivity() {
                     srlPokemonList.isRefreshing = false
                 }
                 is PokemonState.ResultListResponse -> {
-                    pokemonListAdapter.addItems(result.pokemonListResponse.results)
+                    pokemonListAdapter.submitList(result.pokemonListResponse.results)
                 }
                 is PokemonState.Error -> {
                 }

@@ -4,9 +4,9 @@ import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.recyclerview.widget.RecyclerView
 import com.as1k.pokemonchik.R
 import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.presentation.base.BaseViewHolder
@@ -19,68 +19,20 @@ import com.skydoves.transformationlayout.TransformationLayout
 
 class PokemonListAdapter(
     private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
-) : RecyclerView.Adapter<BaseViewHolder>() {
+) : ListAdapter<PokemonItem, PokemonListAdapter.PokemonViewHolder>(DiffUtilCallback()) {
 
-    private val VIEW_TYPE_LOADING = 0
-    private val VIEW_TYPE_NORMAL = 1
-
-    private var isLoaderVisible = false
-
-    private val pokemons = ArrayList<PokemonItem>()
     private var previousTime = SystemClock.elapsedRealtime()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokemonViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            VIEW_TYPE_NORMAL -> PokemonViewHolder(
-                view = inflater.inflate(R.layout.item_pokemon, parent, false),
-                itemClickListener = itemClickListener
-            )
-            VIEW_TYPE_LOADING -> ProgressViewHolder(
-                view = inflater.inflate(R.layout.item_loading, parent, false)
-            )
-            else -> throw Throwable("Invalid view")
-        }
+        return PokemonViewHolder(
+            view = inflater.inflate(R.layout.item_pokemon, parent, false),
+            itemClickListener = itemClickListener
+        )
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (isLoaderVisible) {
-            if (position == pokemons.size - 1) {
-                VIEW_TYPE_LOADING
-            } else {
-                VIEW_TYPE_NORMAL
-            }
-        } else {
-            VIEW_TYPE_NORMAL
-        }
-    }
-
-    override fun getItemCount(): Int = pokemons.size
-
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        if (holder is PokemonViewHolder) {
-            holder.bind(pokemons[position])
-        }
-    }
-
-    fun addItems(list: List<PokemonItem>) {
-        pokemons.addAll(list)
-        notifyDataSetChanged()
-    }
-
-    fun setNewItems(list: List<PokemonItem>) {
-        pokemons.clear()
-        addItems(list)
-        isLoaderVisible = false
-    }
-
-    fun getItem(position: Int): PokemonItem? {
-        return pokemons.get(position)
-    }
-
-    fun clearAll() {
-        pokemons.clear()
-        notifyDataSetChanged()
+    override fun onBindViewHolder(holder: PokemonViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
     inner class PokemonViewHolder(
@@ -113,11 +65,6 @@ class PokemonListAdapter(
                 }
             }
         }
-
-        override fun clear() {}
-    }
-
-    inner class ProgressViewHolder(view: View) : BaseViewHolder(view) {
 
         override fun clear() {}
     }
