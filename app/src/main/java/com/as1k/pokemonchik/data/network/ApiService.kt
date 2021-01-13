@@ -1,6 +1,6 @@
 package com.as1k.pokemonchik.data.network
 
-import com.as1k.pokemonchik.data.network.NetworkConstants.POKEMON_API_URL
+import com.as1k.pokemonchik.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -18,7 +18,7 @@ object ApiService {
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(POKEMON_API_URL)
+            .baseUrl(BuildConfig.POKEMON_API_URL)
             .client(getOkHttp())
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

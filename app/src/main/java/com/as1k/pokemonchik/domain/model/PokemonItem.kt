@@ -1,7 +1,7 @@
 package com.as1k.pokemonchik.domain.model
 
 import android.os.Parcelable
-import com.as1k.pokemonchik.data.network.NetworkConstants.POKEMON_IMAGE_URL
+import com.as1k.pokemonchik.BuildConfig
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -13,6 +13,7 @@ data class PokemonItem(
 
     fun getImageUrl(): String {
         val index = url.split("/".toRegex()).dropLast(1).last()
-        return "$POKEMON_IMAGE_URL$index.png"
+        val imageUrl = BuildConfig.POKEMON_IMAGE_URL
+        return "$imageUrl$index.png"
     }
 }
