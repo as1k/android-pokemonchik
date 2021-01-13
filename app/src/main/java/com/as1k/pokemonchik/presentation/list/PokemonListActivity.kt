@@ -15,6 +15,7 @@ import com.as1k.pokemonchik.domain.use_case.PokemonListUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
 import kotlinx.android.synthetic.main.activity_pokemon_list.*
 import com.as1k.pokemonchik.presentation.utils.setVisibility
+import com.as1k.pokemonchik.presentation.utils.toast
 import com.skydoves.transformationlayout.onTransformationStartContainer
 
 class PokemonListActivity : AppCompatActivity() {
@@ -68,8 +69,7 @@ class PokemonListActivity : AppCompatActivity() {
                     progressBar.setVisibility(false)
                     srlPokemonList.isRefreshing = false
                 }
-                is PokemonState.Error -> {
-                }
+                is PokemonState.Error -> { result.error?.let { toast(it) } }
             }
         })
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="QuoteCustomView" format="reference"/>
+    <declare-styleable name="QuoteCustomView">
+        <attr name="itemText" format="string"/>
+        <attr name="itemAuthor" format="string"/>
+    </declare-styleable>
+
+</resources>

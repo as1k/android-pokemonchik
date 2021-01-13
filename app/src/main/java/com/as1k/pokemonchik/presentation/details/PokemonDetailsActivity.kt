@@ -78,7 +78,8 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
         )
         val pokemonDetailsUseCase = PokemonDetailsUseCase(pokemonRepository)
         val detailsFactory = PokemonDetailsViewModelFactory(pokemonDetailsUseCase)
-        pokemonDetailsViewModel = ViewModelProvider(this, detailsFactory).get(PokemonDetailsViewModel::class.java)
+        pokemonDetailsViewModel =
+            ViewModelProvider(this, detailsFactory).get(PokemonDetailsViewModel::class.java)
 
         val quoteRepository: QuoteRepository = QuoteRepositoryImpl(
             pokemonApi = ApiService.getPokemonApi(),
@@ -87,7 +88,8 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
         )
         val quoteUseCase = RandomQuoteUseCase(quoteRepository)
         val quoteFactory = RandomQuoteViewModelFactory(quoteUseCase)
-        randomQuoteViewModel = ViewModelProvider(this, quoteFactory).get(RandomQuoteViewModel::class.java)
+        randomQuoteViewModel =
+            ViewModelProvider(this, quoteFactory).get(RandomQuoteViewModel::class.java)
     }
 
     private fun getPokemonInfo() {
@@ -96,10 +98,10 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
         pokemonDetailsViewModel.getPokemonInfo(pokemonName)
         pokemonDetailsViewModel.liveData.observe(this, Observer { result ->
             when (result) {
-                is PokemonState.ShowLoading -> { progressBarPokemonDetails.setVisibility(true) }
-                is PokemonState.HideLoading -> { progressBarPokemonDetails.setVisibility(false) }
-                is PokemonState.ResultItem -> { setData(result.pokemonDetails) }
-                is PokemonState.Error -> { }
+                is PokemonState.ShowLoading -> progressBarPokemonDetails.setVisibility(true)
+                is PokemonState.HideLoading -> progressBarPokemonDetails.setVisibility(false)
+                is PokemonState.ResultItem -> setData(result.pokemonDetails)
+                is PokemonState.Error -> result.error?.let { toast(it) }
             }
         })
     }
@@ -107,11 +109,11 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
     private fun getRandomQuote() {
         randomQuoteViewModel.getRandomQuoteLocal()
         randomQuoteViewModel.liveData.observe(this, Observer { result ->
-            when(result) {
+            when (result) {
                 is QuoteState.ShowLoading -> progressBarPokemonDetails.setVisibility(true)
-                is QuoteState.HideLoading -> { progressBarPokemonDetails.setVisibility(false) }
-                is QuoteState.ResultItem -> { setQuoteData(result.randomQuoteEntity) }
-                is QuoteState.Error -> { }
+                is QuoteState.HideLoading -> progressBarPokemonDetails.setVisibility(false)
+                is QuoteState.ResultItem -> setQuoteData(result.randomQuoteEntity)
+                is QuoteState.Error -> result.error?.let { toast(it) }
             }
         })
     }
@@ -137,8 +139,7 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
     }
 
     private fun setQuoteData(randomQuote: RandomQuote) {
-        // quote custom view will be shown
-        toast(randomQuote.toString())
+        quoteView.setQuoteAndAuthor(randomQuote.quoteText, randomQuote.quoteAuthor)
     }
 
     private fun bindViews() {

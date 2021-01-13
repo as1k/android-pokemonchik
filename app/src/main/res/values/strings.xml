@@ -8,4 +8,6 @@
     <string name="def">DEF</string>
     <string name="spd">SPD</string>
     <string name="exp">EXP</string>
+    <string name="copyright">© %s</string>
+    <string name="quotation_marks">“ %s ”</string>
 </resources>

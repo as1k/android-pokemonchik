@@ -43,4 +43,6 @@
     <color name="ground">#AD7235</color>
     <color name="md_blue_100">#81D4fA</color>
     <color name="md_blue_200">#0091EA</color>
+    <color name="light_blue">#F2F5FE</color>
+    <color name="midnight_blue">#062343</color>
 </resources>

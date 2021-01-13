@@ -1,5 +1,6 @@
 package com.as1k.pokemonchik.data.model
 
+import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.google.gson.annotations.SerializedName
 import kotlin.random.Random
 
@@ -16,12 +17,18 @@ data class PokemonInfoData(
     val experience: Int,
     @SerializedName("types")
     val types: List<TypeItemData>,
-    val hp: Int = Random.nextInt(maxHp),
-    val attack: Int = Random.nextInt(maxAttack),
-    val defense: Int = Random.nextInt(maxDefense),
-    val speed: Int = Random.nextInt(maxSpeed),
-    val exp: Int = Random.nextInt(maxExp)
+    val hp: Int = 0,
+    val attack: Int = 0,
+    val defense: Int = 0,
+    val speed: Int = 0,
+    val exp: Int = 0
 ) {
+
+    fun getHpInt(): Int = Random.nextInt(maxHp)
+    fun getAttackInt(): Int = Random.nextInt(maxAttack)
+    fun getDefenseInt(): Int = Random.nextInt(maxDefense)
+    fun getSpeedInt(): Int = Random.nextInt(maxSpeed)
+    fun getExpInt(): Int = Random.nextInt(maxExp)
 
     companion object {
         const val maxHp = 300

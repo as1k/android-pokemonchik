@@ -8,8 +8,7 @@ import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.as1k.pokemonchik.domain.model.Type
 import com.as1k.pokemonchik.domain.model.TypeItem
 
-class PokemonInfoMapper :
-    Mapper<PokemonInfo, PokemonInfoData> {
+class PokemonInfoMapper : Mapper<PokemonInfo, PokemonInfoData> {
 
     override fun from(model: PokemonInfo): PokemonInfoData = with(model) {
         return PokemonInfoData(
@@ -35,11 +34,11 @@ class PokemonInfoMapper :
             weight = weight,
             experience = experience,
             types = types.map { TypeItem(it.slot, Type(it.type.name)) },
-            hp = hp,
-            attack = attack,
-            defense = defense,
-            speed = speed,
-            exp = exp
+            hp = this.getHpInt(),
+            attack = this.getAttackInt(),
+            defense = this.getDefenseInt(),
+            speed = this.getSpeedInt(),
+            exp = this.getExpInt()
         )
     }
 }
