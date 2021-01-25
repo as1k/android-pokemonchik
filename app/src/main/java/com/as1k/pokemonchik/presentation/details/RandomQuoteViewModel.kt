@@ -1,32 +1,41 @@
 package com.as1k.pokemonchik.presentation.details
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.as1k.pokemonchik.domain.use_case.RandomQuoteUseCase
 import com.as1k.pokemonchik.presentation.QuoteState
-import com.as1k.pokemonchik.presentation.base.BaseViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.as1k.pokemonchik.presentation.utils.safeCollect
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.collect
 
 class RandomQuoteViewModel(
     private val randomQuoteUseCase: RandomQuoteUseCase
-) : BaseViewModel() {
+) : ViewModel() {
 
     private val state = MutableLiveData<QuoteState>()
     val liveData: LiveData<QuoteState> = state
 
     fun getRandomQuoteLocal() {
-        addDisposable(
+        viewModelScope.launch {
+            state.postValue(QuoteState.ShowLoading)
             randomQuoteUseCase.getQuoteLocal()
-                .subscribeOn(Schedulers.io())
+                .catch { throwable ->
+                    Timber.e(throwable)
+                    state.postValue(QuoteState.Error(throwable.message))
+                    state.postValue(QuoteState.HideLoading)
+                }
                 .map { item -> QuoteState.ResultItem(item) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { state.value = QuoteState.ShowLoading }
-                .doFinally { state.value = QuoteState.HideLoading }
-                .subscribe(
-                    { result -> state.value = result },
-                    { error -> state.value = QuoteState.Error(error.localizedMessage) }
-                )
-        )
+                .collect { result ->
+                    Log.d("asikn", result.toString())
+                    state.value = result
+                    state.postValue(QuoteState.HideLoading)
+                }
+        }
     }
 }

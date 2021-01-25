@@ -6,7 +6,11 @@ import com.as1k.pokemonchik.data.network.PokemonApi
 import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.as1k.pokemonchik.domain.model.PokemonResponse
 import com.as1k.pokemonchik.domain.repository.PokemonRepository
-import io.reactivex.Single
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 
 class PokemonRepositoryImpl(
     private val pokemonApi: PokemonApi,
@@ -14,30 +18,26 @@ class PokemonRepositoryImpl(
     private val pokemonInfoMapper: PokemonInfoMapper
 ) : PokemonRepository {
 
-    override fun getPokemonList(limit: Int, offset: Int): Single<PokemonResponse> {
-        return pokemonApi.getPokemonList(limit, offset)
-            .flatMap { response ->
-                if (response.isSuccessful) {
-                    Single.just(response.body())
-                } else {
-                    Single.error(Throwable("error pokemon list"))
-                }
-            }.map { pokemonResponseData ->
-                pokemonResponseMapper.to(pokemonResponseData)
-            }
+    @ExperimentalCoroutinesApi
+    private val pokemonResponseChannel = ConflatedBroadcastChannel<PokemonResponse>()
+    @ExperimentalCoroutinesApi
+    private val pokemonInfoChannel = ConflatedBroadcastChannel<PokemonInfo>()
+
+    @FlowPreview
+    @ExperimentalCoroutinesApi
+    override suspend fun getPokemonList(limit: Int, offset: Int): Flow<PokemonResponse> {
+        val pokemonResponseData = pokemonApi.getPokemonList(limit, offset)
+        val pokemonResponse = pokemonResponseMapper.to(pokemonResponseData)
+        pokemonResponseChannel.offer(pokemonResponse)
+        return pokemonResponseChannel.asFlow()
     }
 
-    override fun getPokemonInfo(name: String): Single<PokemonInfo> {
-        return pokemonApi.getPokemonInfo(name)
-            .flatMap { response ->
-                if (response.isSuccessful) {
-                    Single.just(response.body())
-                } else {
-                    Single.error(Throwable("error pokemon info"))
-                }
-            }
-            .map { pokemonInfoData ->
-                pokemonInfoMapper.to(pokemonInfoData)
-            }
+    @FlowPreview
+    @ExperimentalCoroutinesApi
+    override suspend fun getPokemonInfo(name: String): Flow<PokemonInfo> {
+        val pokemonInfoData = pokemonApi.getPokemonInfo(name)
+        val pokemonInfo = pokemonInfoMapper.to(pokemonInfoData)
+        pokemonInfoChannel.offer(pokemonInfo)
+        return pokemonInfoChannel.asFlow()
     }
 }

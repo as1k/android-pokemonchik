@@ -6,13 +6,15 @@ import androidx.paging.PageKeyedDataSource
 import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.domain.use_case.PokemonListUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import com.as1k.pokemonchik.presentation.utils.safeCollect
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class PokemonDataSource(
     private val pokemonListUseCase: PokemonListUseCase,
-    private val compositeDisposable: CompositeDisposable
+    private val viewModelScope: CoroutineScope
 ) : PageKeyedDataSource<Pair<Int, Int>, PokemonItem>() {
 
     companion object {
@@ -26,45 +28,45 @@ class PokemonDataSource(
         params: LoadInitialParams<Pair<Int, Int>>,
         callback: LoadInitialCallback<Pair<Int, Int>, PokemonItem>
     ) {
-        compositeDisposable.add(
+        viewModelScope.launch {
+            stateMutableLiveData.postValue(PokemonState.ShowLoading)
             pokemonListUseCase.getPokemonList(DEFAULT_LIMIT, DEFAULT_OFFSET)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { stateMutableLiveData.postValue(PokemonState.ShowLoading) }
-                .doFinally { stateMutableLiveData.postValue(PokemonState.HideLoading) }
-                .subscribe(
-                    { result ->
-                        val uriNext = Uri.parse(result.next)
-                        val limitNext = uriNext.getQueryParameter("limit")?.toInt() ?: DEFAULT_LIMIT
-                        val offsetNext =
-                            uriNext.getQueryParameter("offset")?.toInt() ?: DEFAULT_OFFSET
-                        callback.onResult(result.results, null, Pair(limitNext, offsetNext))
-                    },
-                    { error -> stateMutableLiveData.postValue(PokemonState.Error(error.localizedMessage)) }
-                )
-        )
+                .catch { throwable ->
+                    Timber.e(throwable)
+                    stateMutableLiveData.postValue(PokemonState.Error(throwable.message))
+                    stateMutableLiveData.postValue(PokemonState.HideLoading)
+                }
+                .safeCollect { result ->
+                    val uriNext = Uri.parse(result.next)
+                    val limitNext = uriNext.getQueryParameter("limit")?.toInt() ?: DEFAULT_LIMIT
+                    val offsetNext =
+                        uriNext.getQueryParameter("offset")?.toInt() ?: DEFAULT_OFFSET
+                    callback.onResult(result.results, null, Pair(limitNext, offsetNext))
+                    stateMutableLiveData.postValue(PokemonState.HideLoading)
+                }
+        }
     }
 
     override fun loadAfter(
         params: LoadParams<Pair<Int, Int>>,
         callback: LoadCallback<Pair<Int, Int>, PokemonItem>
     ) {
-        compositeDisposable.add(
+        viewModelScope.launch {
+            stateMutableLiveData.postValue(PokemonState.ShowLoading)
             pokemonListUseCase.getPokemonList(params.key.first, params.key.second)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { stateMutableLiveData.postValue(PokemonState.ShowLoading) }
-                .doFinally { stateMutableLiveData.postValue(PokemonState.HideLoading) }
-                .subscribe(
-                    { result ->
-                        val uriNext = Uri.parse(result.next)
-                        val limit = uriNext.getQueryParameter("limit")?.toInt() ?: 0
-                        val offset = uriNext.getQueryParameter("offset")?.toInt() ?: 0
-                        callback.onResult(result.results, Pair(limit, offset))
-                    },
-                    { error -> stateMutableLiveData.postValue(PokemonState.Error(error.localizedMessage)) }
-                )
-        )
+                .catch { throwable ->
+                    Timber.e(throwable)
+                    stateMutableLiveData.postValue(PokemonState.Error(throwable.message))
+                    stateMutableLiveData.postValue(PokemonState.HideLoading)
+                }
+                .safeCollect { result ->
+                    val uriNext = Uri.parse(result.next)
+                    val limit = uriNext.getQueryParameter("limit")?.toInt() ?: 0
+                    val offset = uriNext.getQueryParameter("offset")?.toInt() ?: 0
+                    callback.onResult(result.results, Pair(limit, offset))
+                    stateMutableLiveData.postValue(PokemonState.HideLoading)
+                }
+        }
     }
 
     override fun loadBefore(

@@ -57,7 +57,7 @@ dependencies {
 
     // retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation "com.squareup.retrofit2:adapter-rxjava2:2.7.2"
+//    implementation "com.squareup.retrofit2:adapter-rxjava2:2.7.2"
 
     //okHttp
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
@@ -68,8 +68,8 @@ dependencies {
     api 'com.google.code.gson:gson:2.8.6'
 
     // coroutines
-//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1'
-//    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
 
     // recycler view
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -100,24 +100,24 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
 
     // rxJava
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+//    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+//    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
 
     // paging
     implementation "android.arch.paging:runtime:2.1.2"
-    implementation "androidx.paging:paging-rxjava2:2.1.2"
+//    implementation "androidx.paging:paging-rxjava2:2.1.2"
 
     // work manager
     def work_version = "2.4.0"
     implementation "androidx.work:work-runtime-ktx:$work_version"
-    implementation "androidx.work:work-rxjava2:$work_version"
+//    implementation "androidx.work:work-rxjava2:$work_version"
 
     // room
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
-    implementation "androidx.room:room-rxjava2:$room_version"
+//    implementation "androidx.room:room-rxjava2:$room_version"
 
     // timber
     implementation 'com.jakewharton.timber:timber:4.7.1'

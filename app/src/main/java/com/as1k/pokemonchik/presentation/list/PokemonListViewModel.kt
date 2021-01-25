@@ -2,18 +2,19 @@ package com.as1k.pokemonchik.presentation.list
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.domain.use_case.PokemonListUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
-import com.as1k.pokemonchik.presentation.base.BaseViewModel
 import com.as1k.pokemonchik.presentation.source.PokemonDataSource
 import com.as1k.pokemonchik.presentation.source.PokemonDataSourceFactory
 
 class PokemonListViewModel(
     pokemonListUseCase: PokemonListUseCase
-) : BaseViewModel() {
+) : ViewModel() {
 
     val pagedListLiveData: LiveData<PagedList<PokemonItem>>
     val liveData: LiveData<PokemonState>
@@ -27,7 +28,7 @@ class PokemonListViewModel(
             .setPageSize(PokemonDataSource.DEFAULT_LIMIT)
             .setPrefetchDistance(10)
             .build()
-        pokemonDataSourceFactory = PokemonDataSourceFactory(pokemonListUseCase, compositeDisposable)
+        pokemonDataSourceFactory = PokemonDataSourceFactory(pokemonListUseCase, viewModelScope)
 
         pagedListLiveData = LivePagedListBuilder(pokemonDataSourceFactory, pagedListConfig)
             .build()

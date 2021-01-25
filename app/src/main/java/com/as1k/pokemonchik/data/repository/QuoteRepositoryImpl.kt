@@ -5,8 +5,12 @@ import com.as1k.pokemonchik.data.mapper.RandomQuoteMapper
 import com.as1k.pokemonchik.data.network.PokemonApi
 import com.as1k.pokemonchik.domain.model.RandomQuote
 import com.as1k.pokemonchik.domain.repository.QuoteRepository
-import io.reactivex.Flowable
-import io.reactivex.Single
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 
 class QuoteRepositoryImpl(
     private val pokemonApi: PokemonApi,
@@ -14,11 +18,14 @@ class QuoteRepositoryImpl(
     private val randomQuoteMapper: RandomQuoteMapper
 ) : QuoteRepository {
 
+    @ExperimentalCoroutinesApi
+    private val randomQuoteChannel = ConflatedBroadcastChannel<RandomQuote>()
+
     override fun insertRandomQuote(randomQuote: RandomQuote) {
         randomQuoteDao.insertRandomQuote(randomQuoteMapper.from(randomQuote))
     }
 
-    override fun getQuoteLocal(): Flowable<RandomQuote> {
+    override fun getQuoteLocal(): Flow<RandomQuote> {
         return randomQuoteDao.getQuote()
             .map { quoteData -> randomQuoteMapper.to(quoteData) }
     }
@@ -27,17 +34,12 @@ class QuoteRepositoryImpl(
         randomQuoteDao.deleteQuote()
     }
 
-    override fun getRandomQuote(): Single<RandomQuote> {
-        return pokemonApi.getRandomQuote()
-            .flatMap { response ->
-                if (response.isSuccessful) {
-                    Single.just(response.body())
-                } else {
-                    Single.error(Throwable("error random quote"))
-                }
-            }
-            .map { quoteData ->
-                randomQuoteMapper.to(quoteData)
-            }
+    @ExperimentalCoroutinesApi
+    @FlowPreview
+    override suspend fun getRandomQuote(): Flow<RandomQuote> {
+        val quoteData = pokemonApi.getRandomQuote()
+        val quote = randomQuoteMapper.to(quoteData)
+        randomQuoteChannel.offer(quote)
+        return randomQuoteChannel.asFlow()
     }
 }

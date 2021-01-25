@@ -1,8 +1,8 @@
 package com.as1k.pokemonchik.presentation.details
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -26,11 +26,8 @@ import com.as1k.pokemonchik.domain.use_case.PokemonDetailsUseCase
 import com.as1k.pokemonchik.domain.use_case.RandomQuoteUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
 import com.as1k.pokemonchik.presentation.QuoteState
+import com.as1k.pokemonchik.presentation.utils.*
 import com.as1k.pokemonchik.presentation.utils.IntentConstants.POKEMON_ITEM
-import com.as1k.pokemonchik.presentation.utils.bindPokemonTypes
-import com.as1k.pokemonchik.presentation.utils.setProgressViewData
-import com.as1k.pokemonchik.presentation.utils.setVisibility
-import com.as1k.pokemonchik.presentation.utils.toast
 import com.bumptech.glide.Glide
 import com.github.florent37.glidepalette.BitmapPalette
 import com.github.florent37.glidepalette.GlidePalette
@@ -50,8 +47,7 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
             transformationLayout: TransformationLayout,
             pokemonItem: PokemonItem
         ) {
-            val intent = Intent(context, PokemonDetailsActivity::class.java)
-            intent.putExtra(POKEMON_ITEM, pokemonItem)
+            val intent = context.createIntentFor<PokemonDetailsActivity>(POKEMON_ITEM to pokemonItem)
             TransformationCompat.startActivity(transformationLayout, intent)
         }
     }
@@ -139,6 +135,7 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
     }
 
     private fun setQuoteData(randomQuote: RandomQuote) {
+        Log.d("asikn", randomQuote.toString())
         quoteView.setQuoteAndAuthor(randomQuote.quoteText, randomQuote.quoteAuthor)
     }
 
