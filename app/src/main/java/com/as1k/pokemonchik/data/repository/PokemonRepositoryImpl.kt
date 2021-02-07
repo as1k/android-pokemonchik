@@ -1,7 +1,7 @@
 package com.as1k.pokemonchik.data.repository
 
-import com.as1k.pokemonchik.data.mapper.PokemonInfoMapper
-import com.as1k.pokemonchik.data.mapper.PokemonResponseMapper
+import com.as1k.pokemonchik.data.mapper.PokemonInfoDTOMapper
+import com.as1k.pokemonchik.data.mapper.PokemonResponseDTOMapper
 import com.as1k.pokemonchik.data.network.PokemonApi
 import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.as1k.pokemonchik.domain.model.PokemonResponse
@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.asFlow
 
 class PokemonRepositoryImpl(
     private val pokemonApi: PokemonApi,
-    private val pokemonResponseMapper: PokemonResponseMapper,
-    private val pokemonInfoMapper: PokemonInfoMapper
+    private val pokemonResponseDTOMapper: PokemonResponseDTOMapper,
+    private val pokemonInfoDTOMapper: PokemonInfoDTOMapper
 ) : PokemonRepository {
 
     @ExperimentalCoroutinesApi
@@ -27,7 +27,7 @@ class PokemonRepositoryImpl(
     @ExperimentalCoroutinesApi
     override suspend fun getPokemonList(limit: Int, offset: Int): Flow<PokemonResponse> {
         val pokemonResponseData = pokemonApi.getPokemonList(limit, offset)
-        val pokemonResponse = pokemonResponseMapper.to(pokemonResponseData)
+        val pokemonResponse = pokemonResponseDTOMapper.to(pokemonResponseData)
         pokemonResponseChannel.offer(pokemonResponse)
         return pokemonResponseChannel.asFlow()
     }
@@ -36,7 +36,7 @@ class PokemonRepositoryImpl(
     @ExperimentalCoroutinesApi
     override suspend fun getPokemonInfo(name: String): Flow<PokemonInfo> {
         val pokemonInfoData = pokemonApi.getPokemonInfo(name)
-        val pokemonInfo = pokemonInfoMapper.to(pokemonInfoData)
+        val pokemonInfo = pokemonInfoDTOMapper.to(pokemonInfoData)
         pokemonInfoChannel.offer(pokemonInfo)
         return pokemonInfoChannel.asFlow()
     }

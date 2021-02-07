@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.as1k.pokemonchik.domain.use_case.RandomQuoteUseCase
 import com.as1k.pokemonchik.presentation.QuoteState
+import com.as1k.pokemonchik.presentation.mapper.RandomQuoteUIMapper
 import com.as1k.pokemonchik.presentation.utils.safeCollect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -13,7 +14,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
 class RandomQuoteViewModel(
-    private val randomQuoteUseCase: RandomQuoteUseCase
+    private val randomQuoteUseCase: RandomQuoteUseCase,
+    private val randomQuoteUIMapper: RandomQuoteUIMapper
 ) : ViewModel() {
 
     private val state = MutableLiveData<QuoteState>()
@@ -28,7 +30,7 @@ class RandomQuoteViewModel(
                     state.postValue(QuoteState.Error(throwable.message))
                     state.postValue(QuoteState.HideLoading)
                 }
-                .map { item -> QuoteState.ResultItem(item) }
+                .map { item -> QuoteState.ResultItem(randomQuoteUIMapper.from(item)) }
                 .safeCollect { result ->
                     state.value = result
                     state.postValue(QuoteState.HideLoading)

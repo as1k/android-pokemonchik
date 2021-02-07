@@ -6,16 +6,18 @@ import androidx.work.WorkerParameters
 import com.as1k.pokemonchik.domain.use_case.RandomQuoteUseCase
 import com.as1k.pokemonchik.presentation.utils.safeCollect
 import kotlinx.coroutines.flow.catch
+import org.koin.core.component.KoinApiExtension
 import timber.log.Timber
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+@KoinApiExtension
 class RandomQuoteWorker(
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params), KoinComponent {
 
-    val randomQuoteUseCase: RandomQuoteUseCase by inject()
+    private val randomQuoteUseCase: RandomQuoteUseCase by inject()
 
     override suspend fun doWork(): Result {
         return try {

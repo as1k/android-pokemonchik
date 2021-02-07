@@ -2,17 +2,18 @@ package com.as1k.pokemonchik.presentation.details
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
 import com.as1k.pokemonchik.R
-import com.as1k.pokemonchik.domain.model.PokemonInfo
-import com.as1k.pokemonchik.domain.model.PokemonItem
-import com.as1k.pokemonchik.domain.model.RandomQuote
 import com.as1k.pokemonchik.presentation.PokemonState
 import com.as1k.pokemonchik.presentation.QuoteState
+import com.as1k.pokemonchik.presentation.model.PokemonInfoUI
+import com.as1k.pokemonchik.presentation.model.PokemonItemUI
+import com.as1k.pokemonchik.presentation.model.RandomQuoteUI
 import com.as1k.pokemonchik.presentation.utils.*
 import com.as1k.pokemonchik.presentation.utils.IntentConstants.POKEMON_ITEM
 import com.bumptech.glide.Glide
@@ -26,6 +27,7 @@ import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import kotlinx.android.synthetic.main.activity_pokemon_details.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class PokemonDetailsActivity : TransformationAppCompatActivity() {
 
@@ -33,7 +35,7 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
         fun start(
             context: Context,
             transformationLayout: TransformationLayout,
-            pokemonItem: PokemonItem
+            pokemonItem: PokemonItemUI
         ) {
             val intent = context.createIntentFor<PokemonDetailsActivity>(POKEMON_ITEM to pokemonItem)
             TransformationCompat.startActivity(transformationLayout, intent)
@@ -42,7 +44,7 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
 
     private val pokemonDetailsViewModel: PokemonDetailsViewModel by viewModel()
     private val randomQuoteViewModel: RandomQuoteViewModel by viewModel()
-    private val pokemonItem by lazy { intent.extras?.getParcelable<PokemonItem>(POKEMON_ITEM) }
+    private val pokemonItem by lazy { intent.extras?.getParcelable<PokemonItemUI>(POKEMON_ITEM) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,25 +91,25 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
 
     private fun setInitialData() {
         name.text = pokemonItem?.name
-        val pokemonImageUrl = pokemonItem?.getImageUrl()
+        val pokemonImageUrl = pokemonItem?.url
         if (!pokemonImageUrl.isNullOrEmpty()) {
             bindLoadImagePaletteView(image, pokemonImageUrl, header)
         }
     }
 
-    private fun setData(pokemonInfo: PokemonInfo) {
+    private fun setData(pokemonInfo: PokemonInfoUI) {
         ribbonRecyclerView.bindPokemonTypes(pokemonInfo.types)
         index.text = pokemonInfo.getIdString()
         weight.text = pokemonInfo.getWeightString()
         height.text = pokemonInfo.getHeightString()
-        progressHp.setProgressViewData(pokemonInfo.getHpString(), PokemonInfo.maxHp, pokemonInfo.hp)
-        progressAttack.setProgressViewData(pokemonInfo.getAttackString(), PokemonInfo.maxAttack, pokemonInfo.attack)
-        progressDefense.setProgressViewData(pokemonInfo.getDefenseString(), PokemonInfo.maxDefense, pokemonInfo.defense)
-        pokemonSpeed.setProgressViewData(pokemonInfo.getSpeedString(), PokemonInfo.maxSpeed, pokemonInfo.speed)
-        pokemonExperience.setProgressViewData(pokemonInfo.getExpString(), PokemonInfo.maxExp, pokemonInfo.exp)
+        progressHp.setProgressViewData(pokemonInfo.getHpString(), PokemonInfoUI.maxHp, pokemonInfo.hp)
+        progressAttack.setProgressViewData(pokemonInfo.getAttackString(), PokemonInfoUI.maxAttack, pokemonInfo.attack)
+        progressDefense.setProgressViewData(pokemonInfo.getDefenseString(), PokemonInfoUI.maxDefense, pokemonInfo.defense)
+        pokemonSpeed.setProgressViewData(pokemonInfo.getSpeedString(), PokemonInfoUI.maxSpeed, pokemonInfo.speed)
+        pokemonExperience.setProgressViewData(pokemonInfo.getExpString(), PokemonInfoUI.maxExp, pokemonInfo.exp)
     }
 
-    private fun setQuoteData(randomQuote: RandomQuote) {
+    private fun setQuoteData(randomQuote: RandomQuoteUI) {
         quoteView.setQuoteAndAuthor(randomQuote.quoteText, randomQuote.quoteAuthor)
     }
 

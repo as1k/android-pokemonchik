@@ -3,7 +3,7 @@ package com.as1k.pokemonchik.presentation.base
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class BaseViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+abstract class BaseViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     var currentPosition = 0
 

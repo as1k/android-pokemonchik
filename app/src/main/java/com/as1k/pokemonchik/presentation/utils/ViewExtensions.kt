@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
-import com.as1k.pokemonchik.domain.model.TypeItem
+import com.as1k.pokemonchik.presentation.model.TypeItemUI
 import com.skydoves.androidribbon.RibbonRecyclerView
 import com.skydoves.androidribbon.ribbonView
 import com.skydoves.progressview.ProgressView
@@ -61,7 +61,7 @@ fun ProgressView.setProgressViewData(labelText: String, max: Int, progress: Int)
     this.progress = progress.toFloat()
 }
 
-fun RibbonRecyclerView.bindPokemonTypes(types: List<TypeItem>?) {
+fun RibbonRecyclerView.bindPokemonTypes(types: List<TypeItemUI>?) {
     this.clear()
     if (types != null) {
         for (type in types) {

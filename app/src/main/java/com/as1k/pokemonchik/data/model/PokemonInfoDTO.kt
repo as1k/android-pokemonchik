@@ -1,10 +1,9 @@
 package com.as1k.pokemonchik.data.model
 
-import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.google.gson.annotations.SerializedName
 import kotlin.random.Random
 
-data class PokemonInfoData(
+data class PokemonInfoDTO(
     @SerializedName("id")
     val id: Int,
     @SerializedName("name")
@@ -16,7 +15,7 @@ data class PokemonInfoData(
     @SerializedName("base_experience")
     val experience: Int,
     @SerializedName("types")
-    val types: List<TypeItemData>,
+    val types: List<TypeItemDTO>,
     val hp: Int = 0,
     val attack: Int = 0,
     val defense: Int = 0,

@@ -4,7 +4,7 @@ import com.as1k.pokemonchik.data.model.RandomQuoteEntity
 import com.as1k.pokemonchik.domain.mapper.Mapper
 import com.as1k.pokemonchik.domain.model.RandomQuote
 
-class RandomQuoteMapper :
+class RandomQuoteDTOMapper :
     Mapper<RandomQuote, RandomQuoteEntity> {
 
     override fun from(model: RandomQuote): RandomQuoteEntity = with(model) {

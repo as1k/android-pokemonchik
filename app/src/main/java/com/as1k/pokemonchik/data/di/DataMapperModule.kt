@@ -1,12 +1,12 @@
 package com.as1k.pokemonchik.data.di
 
-import com.as1k.pokemonchik.data.mapper.PokemonInfoMapper
-import com.as1k.pokemonchik.data.mapper.PokemonResponseMapper
-import com.as1k.pokemonchik.data.mapper.RandomQuoteMapper
+import com.as1k.pokemonchik.data.mapper.PokemonInfoDTOMapper
+import com.as1k.pokemonchik.data.mapper.PokemonResponseDTOMapper
+import com.as1k.pokemonchik.data.mapper.RandomQuoteDTOMapper
 import org.koin.dsl.module
 
 val dataMapperModule = module {
-    factory { PokemonInfoMapper() }
-    factory { PokemonResponseMapper() }
-    factory { RandomQuoteMapper() }
+    factory { PokemonInfoDTOMapper() }
+    factory { PokemonResponseDTOMapper() }
+    factory { RandomQuoteDTOMapper() }
 }

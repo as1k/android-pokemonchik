@@ -1,23 +1,23 @@
-package com.as1k.pokemonchik.data.mapper
+package com.as1k.pokemonchik.presentation.mapper
 
-import com.as1k.pokemonchik.data.model.PokemonInfoData
-import com.as1k.pokemonchik.data.model.TypeData
-import com.as1k.pokemonchik.data.model.TypeItemData
 import com.as1k.pokemonchik.domain.mapper.Mapper
 import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.as1k.pokemonchik.domain.model.Type
 import com.as1k.pokemonchik.domain.model.TypeItem
+import com.as1k.pokemonchik.presentation.model.PokemonInfoUI
+import com.as1k.pokemonchik.presentation.model.TypeItemUI
+import com.as1k.pokemonchik.presentation.model.TypeUI
 
-class PokemonInfoMapper : Mapper<PokemonInfo, PokemonInfoData> {
+class PokemonInfoUIMapper : Mapper<PokemonInfo, PokemonInfoUI> {
 
-    override fun from(model: PokemonInfo): PokemonInfoData = with(model) {
-        return PokemonInfoData(
+    override fun from(model: PokemonInfo): PokemonInfoUI = with(model) {
+        return PokemonInfoUI(
             id = id,
             name = name,
             height = height,
             weight = weight,
             experience = experience,
-            types = types.map { TypeItemData(it.slot, TypeData(it.type.name)) },
+            types = types.map { TypeItemUI(it.slot, TypeUI(it.type.name)) },
             hp = hp,
             attack = attack,
             defense = defense,
@@ -26,7 +26,7 @@ class PokemonInfoMapper : Mapper<PokemonInfo, PokemonInfoData> {
         )
     }
 
-    override fun to(model: PokemonInfoData): PokemonInfo = with(model) {
+    override fun to(model: PokemonInfoUI): PokemonInfo = with(model) {
         return PokemonInfo(
             id = id,
             name = name,
@@ -34,11 +34,11 @@ class PokemonInfoMapper : Mapper<PokemonInfo, PokemonInfoData> {
             weight = weight,
             experience = experience,
             types = types.map { TypeItem(it.slot, Type(it.type.name)) },
-            hp = this.getHpInt(),
-            attack = this.getAttackInt(),
-            defense = this.getDefenseInt(),
-            speed = this.getSpeedInt(),
-            exp = this.getExpInt()
+            hp = hp,
+            attack = attack,
+            defense = defense,
+            speed = speed,
+            exp = exp
         )
     }
 }

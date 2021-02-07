@@ -7,7 +7,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val viewModelModule =  module {
-    viewModel { PokemonListViewModel(pokemonListUseCase = get()) }
-    viewModel { PokemonDetailsViewModel(pokemonDetailsUseCase = get()) }
-    viewModel { RandomQuoteViewModel(randomQuoteUseCase = get()) }
+    viewModel { PokemonListViewModel(pokemonListUseCase = get(), pokemonResponseUIMapper = get()) }
+    viewModel { PokemonDetailsViewModel(pokemonDetailsUseCase = get(), pokemonInfoUIMapper = get()) }
+    viewModel { RandomQuoteViewModel(randomQuoteUseCase = get(), randomQuoteUIMapper = get()) }
 }

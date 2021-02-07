@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import com.as1k.pokemonchik.R
-import com.as1k.pokemonchik.domain.model.PokemonItem
+import com.as1k.pokemonchik.presentation.model.PokemonItemUI
 import com.as1k.pokemonchik.presentation.base.BaseViewHolder
 import com.as1k.pokemonchik.presentation.details.PokemonDetailsActivity
 import androidx.paging.PagedListAdapter
@@ -18,8 +18,8 @@ import com.google.android.material.card.MaterialCardView
 import com.skydoves.transformationlayout.TransformationLayout
 
 class PokemonListAdapter(
-    private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
-) : PagedListAdapter<PokemonItem, PokemonListAdapter.PokemonViewHolder>(DiffUtilCallback()) {
+    private val itemClickListener: ((item: PokemonItemUI) -> Unit)? = null
+) : PagedListAdapter<PokemonItemUI, PokemonListAdapter.PokemonViewHolder>(DiffUtilCallback()) {
 
     private var previousTime = SystemClock.elapsedRealtime()
 
@@ -37,7 +37,7 @@ class PokemonListAdapter(
 
     inner class PokemonViewHolder(
         private val view: View,
-        private val itemClickListener: ((item: PokemonItem) -> Unit)? = null
+        private val itemClickListener: ((item: PokemonItemUI) -> Unit)? = null
     ) : BaseViewHolder(view) {
 
         private val transformationLayout: TransformationLayout
@@ -52,8 +52,8 @@ class PokemonListAdapter(
             pokemonName = view.findViewById(R.id.pokemonName)
         }
 
-        fun bind(item: PokemonItem) {
-            bindLoadImagePalette(pokemonImage, item.getImageUrl(), cardView)
+        fun bind(item: PokemonItemUI) {
+            bindLoadImagePalette(pokemonImage, item.url, cardView)
             pokemonName.text = item.name
 
             view.setOnClickListener {

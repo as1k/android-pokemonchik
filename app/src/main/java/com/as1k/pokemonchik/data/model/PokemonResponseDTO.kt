@@ -2,7 +2,7 @@ package com.as1k.pokemonchik.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class PokemonResponseData(
+data class PokemonResponseDTO(
     @SerializedName("count")
     val count: Int,
     @SerializedName("next")
@@ -10,5 +10,5 @@ data class PokemonResponseData(
     @SerializedName("previous")
     val previous: String?,
     @SerializedName("results")
-    val results: List<PokemonItemData>
+    val results: List<PokemonItemDTO>
 )

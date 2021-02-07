@@ -7,6 +7,6 @@ import com.as1k.pokemonchik.domain.repository.QuoteRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<PokemonRepository> { PokemonRepositoryImpl(pokemonApi = get(), pokemonResponseMapper = get(), pokemonInfoMapper = get()) }
-    single<QuoteRepository> { QuoteRepositoryImpl(pokemonApi = get(), randomQuoteMapper = get(), randomQuoteDao = get()) }
+    single<PokemonRepository> { PokemonRepositoryImpl(pokemonApi = get(), pokemonResponseDTOMapper = get(), pokemonInfoDTOMapper = get()) }
+    single<QuoteRepository> { QuoteRepositoryImpl(pokemonApi = get(), randomQuoteDTOMapper = get(), randomQuoteDao = get()) }
 }

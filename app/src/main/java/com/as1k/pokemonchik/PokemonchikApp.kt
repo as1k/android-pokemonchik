@@ -10,9 +10,11 @@ import com.as1k.pokemonchik.data.di.dataMapperModule
 import com.as1k.pokemonchik.data.di.networkModule
 import com.as1k.pokemonchik.data.di.repositoryModule
 import com.as1k.pokemonchik.domain.di.useCaseModule
+import com.as1k.pokemonchik.presentation.di.uiMapperModule
 import com.as1k.pokemonchik.presentation.di.viewModelModule
 import com.as1k.pokemonchik.worker.RandomQuoteWorker
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.component.KoinApiExtension
 import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -23,6 +25,7 @@ const val RANDOM_QUOTE_ONE_TIME_WORK = "random_quote_one_time_work"
 
 class PokemonchikApp : Application() {
 
+    @KoinApiExtension
     override fun onCreate() {
         super.onCreate()
         startKoin {
@@ -34,7 +37,8 @@ class PokemonchikApp : Application() {
                     networkModule,
                     repositoryModule,
                     useCaseModule,
-                    viewModelModule
+                    viewModelModule,
+                    uiMapperModule
                 )
             )
         }
@@ -46,6 +50,7 @@ class PokemonchikApp : Application() {
         startFetchRandomQuote()
     }
 
+    @KoinApiExtension
     private fun startFetchRandomQuote() {
         val workManager = WorkManager.getInstance(this)
         val constraints = Constraints.Builder()

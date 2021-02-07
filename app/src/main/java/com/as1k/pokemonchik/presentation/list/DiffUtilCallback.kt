@@ -1,14 +1,14 @@
 package com.as1k.pokemonchik.presentation.list
 
 import androidx.recyclerview.widget.DiffUtil
-import com.as1k.pokemonchik.domain.model.PokemonItem
+import com.as1k.pokemonchik.presentation.model.PokemonItemUI
 
-class DiffUtilCallback : DiffUtil.ItemCallback<PokemonItem>() {
-    override fun areItemsTheSame(oldItem: PokemonItem, newItem: PokemonItem): Boolean {
+class DiffUtilCallback : DiffUtil.ItemCallback<PokemonItemUI>() {
+    override fun areItemsTheSame(oldItem: PokemonItemUI, newItem: PokemonItemUI): Boolean {
         return oldItem.name == newItem.name
     }
 
-    override fun areContentsTheSame(oldItem: PokemonItem, newItem: PokemonItem): Boolean {
+    override fun areContentsTheSame(oldItem: PokemonItemUI, newItem: PokemonItemUI): Boolean {
         return oldItem == newItem
     }
 }
