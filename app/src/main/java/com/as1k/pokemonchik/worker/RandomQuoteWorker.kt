@@ -3,27 +3,19 @@ package com.as1k.pokemonchik.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.as1k.pokemonchik.data.database.PokemonchikDatabase
-import com.as1k.pokemonchik.data.mapper.RandomQuoteMapper
-import com.as1k.pokemonchik.data.network.ApiService
-import com.as1k.pokemonchik.data.repository.QuoteRepositoryImpl
-import com.as1k.pokemonchik.domain.repository.QuoteRepository
 import com.as1k.pokemonchik.domain.use_case.RandomQuoteUseCase
 import com.as1k.pokemonchik.presentation.utils.safeCollect
 import kotlinx.coroutines.flow.catch
 import timber.log.Timber
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class RandomQuoteWorker(
     context: Context,
     params: WorkerParameters
-) : CoroutineWorker(context, params) {
+) : CoroutineWorker(context, params), KoinComponent {
 
-    val repository: QuoteRepository = QuoteRepositoryImpl(
-        pokemonApi = ApiService.getPokemonApi(),
-        randomQuoteDao = PokemonchikDatabase.getDatabase(context).getRandomQuoteDao(),
-        randomQuoteMapper = RandomQuoteMapper()
-    )
-    val randomQuoteUseCase = RandomQuoteUseCase(repository)
+    val randomQuoteUseCase: RandomQuoteUseCase by inject()
 
     override suspend fun doWork(): Result {
         return try {

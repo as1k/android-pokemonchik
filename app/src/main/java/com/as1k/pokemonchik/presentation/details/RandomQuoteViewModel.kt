@@ -1,6 +1,5 @@
 package com.as1k.pokemonchik.presentation.details
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +11,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.collect
 
 class RandomQuoteViewModel(
     private val randomQuoteUseCase: RandomQuoteUseCase
@@ -31,8 +29,7 @@ class RandomQuoteViewModel(
                     state.postValue(QuoteState.HideLoading)
                 }
                 .map { item -> QuoteState.ResultItem(item) }
-                .collect { result ->
-                    Log.d("asikn", result.toString())
+                .safeCollect { result ->
                     state.value = result
                     state.postValue(QuoteState.HideLoading)
                 }

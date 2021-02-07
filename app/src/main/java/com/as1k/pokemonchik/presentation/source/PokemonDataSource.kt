@@ -6,6 +6,7 @@ import androidx.paging.PageKeyedDataSource
 import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.domain.use_case.PokemonListUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
+import com.as1k.pokemonchik.presentation.utils.QueryParams
 import com.as1k.pokemonchik.presentation.utils.safeCollect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
@@ -38,9 +39,9 @@ class PokemonDataSource(
                 }
                 .safeCollect { result ->
                     val uriNext = Uri.parse(result.next)
-                    val limitNext = uriNext.getQueryParameter("limit")?.toInt() ?: DEFAULT_LIMIT
+                    val limitNext = uriNext.getQueryParameter(QueryParams.LIMIT)?.toInt() ?: DEFAULT_LIMIT
                     val offsetNext =
-                        uriNext.getQueryParameter("offset")?.toInt() ?: DEFAULT_OFFSET
+                        uriNext.getQueryParameter(QueryParams.OFFSET)?.toInt() ?: DEFAULT_OFFSET
                     callback.onResult(result.results, null, Pair(limitNext, offsetNext))
                     stateMutableLiveData.postValue(PokemonState.HideLoading)
                 }
@@ -61,8 +62,8 @@ class PokemonDataSource(
                 }
                 .safeCollect { result ->
                     val uriNext = Uri.parse(result.next)
-                    val limit = uriNext.getQueryParameter("limit")?.toInt() ?: 0
-                    val offset = uriNext.getQueryParameter("offset")?.toInt() ?: 0
+                    val limit = uriNext.getQueryParameter(QueryParams.LIMIT)?.toInt() ?: 0
+                    val offset = uriNext.getQueryParameter(QueryParams.OFFSET)?.toInt() ?: 0
                     callback.onResult(result.results, Pair(limit, offset))
                     stateMutableLiveData.postValue(PokemonState.HideLoading)
                 }

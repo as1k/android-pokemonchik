@@ -5,7 +5,15 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.*
 import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS
 import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
+import com.as1k.pokemonchik.data.di.dataBaseModule
+import com.as1k.pokemonchik.data.di.dataMapperModule
+import com.as1k.pokemonchik.data.di.networkModule
+import com.as1k.pokemonchik.data.di.repositoryModule
+import com.as1k.pokemonchik.domain.di.useCaseModule
+import com.as1k.pokemonchik.presentation.di.viewModelModule
 import com.as1k.pokemonchik.worker.RandomQuoteWorker
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -17,6 +25,20 @@ class PokemonchikApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidContext(this@PokemonchikApp)
+            modules(
+                listOf(
+                    dataBaseModule,
+                    dataMapperModule,
+                    networkModule,
+                    repositoryModule,
+                    useCaseModule,
+                    viewModelModule
+                )
+            )
+        }
+
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

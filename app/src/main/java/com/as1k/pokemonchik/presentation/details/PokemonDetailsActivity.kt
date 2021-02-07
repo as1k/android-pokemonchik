@@ -2,28 +2,15 @@ package com.as1k.pokemonchik.presentation.details
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.as1k.pokemonchik.R
-import com.as1k.pokemonchik.data.database.PokemonchikDatabase
-import com.as1k.pokemonchik.data.mapper.PokemonInfoMapper
-import com.as1k.pokemonchik.data.mapper.PokemonResponseMapper
-import com.as1k.pokemonchik.data.mapper.RandomQuoteMapper
-import com.as1k.pokemonchik.data.network.ApiService
-import com.as1k.pokemonchik.data.repository.PokemonRepositoryImpl
-import com.as1k.pokemonchik.data.repository.QuoteRepositoryImpl
 import com.as1k.pokemonchik.domain.model.PokemonInfo
 import com.as1k.pokemonchik.domain.model.PokemonItem
 import com.as1k.pokemonchik.domain.model.RandomQuote
-import com.as1k.pokemonchik.domain.repository.PokemonRepository
-import com.as1k.pokemonchik.domain.repository.QuoteRepository
-import com.as1k.pokemonchik.domain.use_case.PokemonDetailsUseCase
-import com.as1k.pokemonchik.domain.use_case.RandomQuoteUseCase
 import com.as1k.pokemonchik.presentation.PokemonState
 import com.as1k.pokemonchik.presentation.QuoteState
 import com.as1k.pokemonchik.presentation.utils.*
@@ -38,6 +25,7 @@ import com.skydoves.transformationlayout.TransformationAppCompatActivity
 import com.skydoves.transformationlayout.TransformationCompat
 import com.skydoves.transformationlayout.TransformationLayout
 import kotlinx.android.synthetic.main.activity_pokemon_details.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PokemonDetailsActivity : TransformationAppCompatActivity() {
 
@@ -52,8 +40,8 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
         }
     }
 
-    private lateinit var pokemonDetailsViewModel: PokemonDetailsViewModel
-    private lateinit var randomQuoteViewModel: RandomQuoteViewModel
+    private val pokemonDetailsViewModel: PokemonDetailsViewModel by viewModel()
+    private val randomQuoteViewModel: RandomQuoteViewModel by viewModel()
     private val pokemonItem by lazy { intent.extras?.getParcelable<PokemonItem>(POKEMON_ITEM) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,37 +49,19 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
         setContentView(R.layout.activity_pokemon_details)
         bindViews()
         setInitialData()
-        initDependencies()
         getPokemonInfo()
+        observePokemonInfo()
         getRandomQuote()
-    }
-
-    private fun initDependencies() {
-        val pokemonRepository: PokemonRepository = PokemonRepositoryImpl(
-            pokemonApi = ApiService.getPokemonApi(),
-            pokemonResponseMapper = PokemonResponseMapper(),
-            pokemonInfoMapper = PokemonInfoMapper()
-        )
-        val pokemonDetailsUseCase = PokemonDetailsUseCase(pokemonRepository)
-        val detailsFactory = PokemonDetailsViewModelFactory(pokemonDetailsUseCase)
-        pokemonDetailsViewModel =
-            ViewModelProvider(this, detailsFactory).get(PokemonDetailsViewModel::class.java)
-
-        val quoteRepository: QuoteRepository = QuoteRepositoryImpl(
-            pokemonApi = ApiService.getPokemonApi(),
-            randomQuoteDao = PokemonchikDatabase.getDatabase(this).getRandomQuoteDao(),
-            randomQuoteMapper = RandomQuoteMapper()
-        )
-        val quoteUseCase = RandomQuoteUseCase(quoteRepository)
-        val quoteFactory = RandomQuoteViewModelFactory(quoteUseCase)
-        randomQuoteViewModel =
-            ViewModelProvider(this, quoteFactory).get(RandomQuoteViewModel::class.java)
+        observeRandomQuote()
     }
 
     private fun getPokemonInfo() {
         val pokemonName = pokemonItem?.name ?: return
 
         pokemonDetailsViewModel.getPokemonInfo(pokemonName)
+    }
+
+    private fun observePokemonInfo() {
         pokemonDetailsViewModel.liveData.observe(this, Observer { result ->
             when (result) {
                 is PokemonState.ShowLoading -> progressBarPokemonDetails.setVisibility(true)
@@ -104,6 +74,9 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
 
     private fun getRandomQuote() {
         randomQuoteViewModel.getRandomQuoteLocal()
+    }
+
+    private fun observeRandomQuote() {
         randomQuoteViewModel.liveData.observe(this, Observer { result ->
             when (result) {
                 is QuoteState.ShowLoading -> progressBarPokemonDetails.setVisibility(true)
@@ -135,7 +108,6 @@ class PokemonDetailsActivity : TransformationAppCompatActivity() {
     }
 
     private fun setQuoteData(randomQuote: RandomQuote) {
-        Log.d("asikn", randomQuote.toString())
         quoteView.setQuoteAndAuthor(randomQuote.quoteText, randomQuote.quoteAuthor)
     }
 
