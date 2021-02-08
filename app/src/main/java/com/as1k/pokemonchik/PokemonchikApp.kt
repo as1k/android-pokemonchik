@@ -1,0 +1,80 @@
+package com.as1k.pokemonchik
+
+import android.app.Application
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.work.*
+import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS
+import androidx.work.PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
+import com.as1k.pokemonchik.data.di.dataBaseModule
+import com.as1k.pokemonchik.data.di.dataMapperModule
+import com.as1k.pokemonchik.data.di.networkModule
+import com.as1k.pokemonchik.data.di.repositoryModule
+import com.as1k.pokemonchik.domain.di.useCaseModule
+import com.as1k.pokemonchik.presentation.di.uiMapperModule
+import com.as1k.pokemonchik.presentation.di.viewModelModule
+import com.as1k.pokemonchik.worker.RandomQuoteWorker
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.context.startKoin
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
+
+
+const val RANDOM_QUOTE_PERIODIC_WORK = "random_quote_periodic_work"
+const val RANDOM_QUOTE_ONE_TIME_WORK = "random_quote_one_time_work"
+
+class PokemonchikApp : Application() {
+
+    @KoinApiExtension
+    override fun onCreate() {
+        super.onCreate()
+        startKoin {
+            androidContext(this@PokemonchikApp)
+            modules(
+                listOf(
+                    dataBaseModule,
+                    dataMapperModule,
+                    networkModule,
+                    repositoryModule,
+                    useCaseModule,
+                    viewModelModule,
+                    uiMapperModule
+                )
+            )
+        }
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+        ProcessLifecycleOwner.get().lifecycle.addObserver(PokemonchikLifecycleOwner(this))
+        startFetchRandomQuote()
+    }
+
+    @KoinApiExtension
+    private fun startFetchRandomQuote() {
+        val workManager = WorkManager.getInstance(this)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            .build()
+
+        val initWorkRequest = OneTimeWorkRequestBuilder<RandomQuoteWorker>()
+            .addTag(RANDOM_QUOTE_ONE_TIME_WORK)
+            .setConstraints(constraints)
+            .build()
+
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<RandomQuoteWorker>(
+            MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS, MIN_PERIODIC_FLEX_MILLIS, TimeUnit.MILLISECONDS
+        )
+            .addTag(RANDOM_QUOTE_PERIODIC_WORK)
+            .setConstraints(constraints)
+            .build()
+
+        workManager.beginUniqueWork(
+            RANDOM_QUOTE_ONE_TIME_WORK, ExistingWorkPolicy.KEEP, initWorkRequest
+        ).enqueue()
+
+        workManager.enqueueUniquePeriodicWork(
+            RANDOM_QUOTE_PERIODIC_WORK, ExistingPeriodicWorkPolicy.REPLACE, periodicWorkRequest
+        )
+    }
+}
